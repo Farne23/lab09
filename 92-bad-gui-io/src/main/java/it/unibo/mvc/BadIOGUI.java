@@ -10,11 +10,17 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -45,6 +51,15 @@ public class BadIOGUI {
         canvas.add(write, BorderLayout.CENTER);
         frame.setContentPane(canvas);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        //01.01
+        final JPanel canvas2 = new JPanel();
+        canvas2.setLayout(new BoxLayout(canvas2,BoxLayout.X_AXIS));
+        frame.setContentPane(canvas2);
+        canvas2.add(write);
+        //01.02
+        final JButton read = new JButton("Read from file");
+        canvas2.add(read);
         /*
          * Handlers
          */
@@ -63,6 +78,25 @@ public class BadIOGUI {
                 } catch (IOException e1) {
                     JOptionPane.showMessageDialog(frame, e1, "Error", JOptionPane.ERROR_MESSAGE);
                     e1.printStackTrace(); // NOPMD: allowed as this is just an exercise
+                }
+            }
+        });
+
+        read.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                List<String> generatedNumbers = new ArrayList<String>();
+                try{
+                    File inputFile = new File(PATH);
+                    generatedNumbers =  Files.readAllLines(inputFile.toPath(), StandardCharsets.UTF_8);
+                }catch(IOException e2){
+                    JOptionPane.showMessageDialog(frame, e2, "Error", JOptionPane.ERROR_MESSAGE);
+                    e2.printStackTrace(); // NOPMD: allowed as this is just an exercise
+                }
+
+                //NOTE: Because of how the write function is printing, there will always be only one line to read.
+                for(String line : generatedNumbers){
+                    System.out.println(line);
                 }
             }
         });
@@ -90,6 +124,7 @@ public class BadIOGUI {
         /*
          * OK, ready to push the frame onscreen
          */
+        frame.pack();
         frame.setVisible(true);
     }
 
